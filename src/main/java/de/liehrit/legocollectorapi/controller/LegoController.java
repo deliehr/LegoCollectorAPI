@@ -2,6 +2,8 @@ package de.liehrit.legocollectorapi.controller;
 import de.liehrit.legocollectorapi.model.SetContainerResponse;
 import de.liehrit.legocollectorapi.model.SetResponse;
 import de.liehrit.legocollectorapi.model.SetsResponse;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,8 +32,20 @@ public class LegoController {
 
     private static final Logger logger = LoggerFactory.getLogger(LegoController.class);
 
+    private List<SetResponse> cache;    // otherwise use reddis
+
+    private DateTime lastRequest;
+
     @GetMapping(value = "/sets")
     public List<SetResponse> getSets() throws Exception {
+        if(lastRequest != null && cache != null && cache.size() > 0) {
+            var duration = new Duration(lastRequest, DateTime.now());
+
+            if(duration.getStandardMinutes() <= 15) {
+                return cache;
+            }
+        }
+
         WebClient client = WebClient.create();
 
         if(legoApiUrl == null || legoApiUrl.length() == 0 || legoApiKey == null || legoApiKey.length() == 0) {
@@ -52,7 +66,13 @@ public class LegoController {
                     .block();
 
             if(rebrickableResponse != null) {
-                return rebrickableResponse.getResults().stream().map(SetContainerResponse::getSet).toList();
+                lastRequest = DateTime.now();
+
+                var mappedResponse = rebrickableResponse.getResults().stream().map(SetContainerResponse::getSet).toList();
+
+                cache = mappedResponse;
+
+                return mappedResponse;
             }
         } catch (Exception e) {
             logger.debug(e.getLocalizedMessage());
