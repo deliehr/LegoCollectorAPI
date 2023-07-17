@@ -1,9 +1,9 @@
 package de.liehrit.legocollectorapi.model;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetResponse {
+
     String set_num;
     String name;
     int year;
@@ -16,7 +16,7 @@ public class SetResponse {
     public SetResponse() {
     }
 
-    public String getSet_num() {
+    public String getNumber() {
         return set_num;
     }
 
@@ -40,15 +40,11 @@ public class SetResponse {
         this.year = year;
     }
 
-    public int getTheme_id() {
-        return theme_id;
-    }
-
     public void setTheme_id(int theme_id) {
         this.theme_id = theme_id;
     }
 
-    public int getNum_parts() {
+    public int getPartsCount() {
         return num_parts;
     }
 
@@ -56,7 +52,7 @@ public class SetResponse {
         this.num_parts = num_parts;
     }
 
-    public String getSet_img_url() {
+    public String getImageUrl() {
         return set_img_url;
     }
 
@@ -64,7 +60,7 @@ public class SetResponse {
         this.set_img_url = set_img_url;
     }
 
-    public String getSet_url() {
+    public String getSetUrl() {
         return set_url;
     }
 
@@ -72,7 +68,7 @@ public class SetResponse {
         this.set_url = set_url;
     }
 
-    public String getLast_modified_dt() {
+    public String getLastModifiedDate() {
         return last_modified_dt;
     }
 
